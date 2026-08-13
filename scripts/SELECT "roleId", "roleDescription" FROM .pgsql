@@ -1,0 +1,1 @@
+SELECT "roleId", "roleDescription" FROM "Roles" LIMIT 1000;

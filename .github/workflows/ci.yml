@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-audit:
+    name: Build, test and dependency audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up .NET SDK from global.json
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      - name: Restore packages and fail on high-severity NuGet advisories
+        run: dotnet restore WebApiNet10.slnx --warnaserror:NU1903
+
+      - name: Build with warnings as errors
+        run: dotnet build WebApiNet10.slnx --no-restore --configuration Release --warnaserror
+
+      - name: Run tests
+        run: dotnet test WebApiNet10.slnx --no-build --no-restore --configuration Release
+
+      - name: List vulnerable dependencies
+        if: always()
+        run: dotnet list WebApiNet10.slnx package --vulnerable --include-transitive --no-restore

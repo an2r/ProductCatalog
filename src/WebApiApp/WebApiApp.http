@@ -1,0 +1,9 @@
+@WebApiApp_HostAddress = http://localhost:5086
+
+GET {{WebApiApp_HostAddress}}/api/health/db
+Accept: application/json
+
+###
+
+GET {{WebApiApp_HostAddress}}/api/catalog
+Accept: application/json
